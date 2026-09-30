@@ -81,6 +81,7 @@ else:
                 st.dataframe(
                     styledDf,
                     width="stretch",
+                    height="content",
                     hide_index=True,
                     column_config=_synopsis_compare_column_config(display_df),
                 )

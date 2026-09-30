@@ -81,6 +81,24 @@ def test_st_taxparams_shape():
     assert N_st >= 4  # MN has 4 brackets for single
 
 
+@pytest.mark.parametrize("n_individuals, expected_tax", [(1, [60838.5, 60838.5]), (2, [54937.0, 60838.5])])
+def test_st_taxparams_unequal_brackets_preserve_top_rate(n_individuals, expected_tax):
+    """PO's shorter Single schedule keeps its top bracket, also after an MFJ transition."""
+    _, rates, widths, *_ = tax_state.st_taxParams(
+        "PO", n_individuals, 1, 2, np.ones(3), [1960] * n_individuals
+    )
+    for year in range(2):
+        lower_bounds = np.concatenate(([0.0], np.cumsum(widths[:-1, year])))
+        taxable_by_bracket = np.clip(500_000.0 - lower_bounds, 0.0, widths[:, year])
+        # Independent Oregon + 2026 SHS + PFA totals on $500,000 taxable income.
+        assert np.dot(rates[:, year], taxable_by_bracket) == pytest.approx(expected_tax[year])
+
+    # Final year uses Single: the sixth bracket is real; the seventh is only padding.
+    assert rates[-2, -1] == pytest.approx(0.139)
+    assert widths[-2, -1] == tax_state._LAST_BRACKET_SENTINEL
+    assert rates[-1, -1] == widths[-1, -1] == 0.0
+
+
 def test_st_taxparams_inflation_scaling():
     """Bracket widths and deductions scale with gamma_n."""
     gamma_flat = np.ones(31)

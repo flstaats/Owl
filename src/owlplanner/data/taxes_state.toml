@@ -916,6 +916,34 @@ retirement_income_exemption = 0
 exemption_age = 0
 pension_exemption = 0
 
+# PO: Portland residents within both Multnomah County and Metro (2026 basis).
+# SHS: 1% above $128,000 Single / $205,000 MFJ (2026 inflation-adjusted thresholds).
+# Source: https://www.portland.gov/revenue/personal-tax
+# PFA: 1.5% above $125,000 / $200,000, plus 1.5% above $250,000 / $400,000.
+# Source: https://multco.us/info/multnomah-county-preschool-all-personal-income-tax
+# Merge OR/local taxable-income thresholds; sum marginal rates in each interval.
+# Retain OR deductions/exemptions; local-only adjustments (e.g. PERS) are not modeled.
+# 2026 snapshot: later PFA rate changes/fixed thresholds are not modeled by Owl's scaling.
+[PO_Single]
+# At $125k: 9.9+1.5=11.4%; $128k: +1=12.4%; $250k: +1.5=13.9%.
+brackets = [[0.0, 4.75], [4550.0, 6.75], [11400.0, 8.75], [125000.0, 11.4], [128000.0, 12.4], [250000.0, 13.9]]
+standard_deduction = 2910
+tax_social_security = false
+ss_exemption_threshold = 0
+retirement_income_exemption = 0
+exemption_age = 0
+pension_exemption = 0
+
+[PO_MFJ]
+# At $200k: 8.75+1.5=10.25%; $205k: +1=11.25%; $250k: 9.9+2.5=12.4%; $400k: +1.5=13.9%.
+brackets = [[0.0, 4.75], [9100.0, 6.75], [22800.0, 8.75], [200000.0, 10.25], [205000.0, 11.25], [250000.0, 12.4], [400000.0, 13.9]]
+standard_deduction = 5820
+tax_social_security = false
+ss_exemption_threshold = 0
+retirement_income_exemption = 0
+exemption_age = 0
+pension_exemption = 0
+
 [RI_Single]
 # RI taxes SS
 brackets = [[0.0, 3.75], [74200.0, 4.75], [168600.0, 5.99]]

@@ -1782,12 +1782,13 @@ def showWorkbook(plan):
             if "Accounts" in name:
                 acct_note = " Opening balance as of Jan 1st of that year."
                 display_df = df.style.apply(highlight_year_row, axis=1)
-                st.dataframe(display_df, width="stretch", column_config=colfor, hide_index=True, placeholder="-")
+                st.dataframe(display_df, width="stretch", height="content", column_config=colfor, hide_index=True, placeholder="-")
             else:
                 acct_note = ""
                 st.dataframe(
                     _worksheet_df_for_streamlit_display(df),
                     width="stretch",
+                    height="content",
                     column_config=colfor,
                     hide_index=True,
                     placeholder="-",

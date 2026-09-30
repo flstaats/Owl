@@ -128,17 +128,14 @@ def st_taxParams(state: str, N_i: int, n_d: int, N_n: int, gamma_n: np.ndarray, 
     N_st = max(n_single, n_mfj)
 
     # --- Pre-compute base rates and widths for each filing status ---
-    # Pad shorter bracket list with zero-width, zero-rate brackets at the end.
-    def _pad(brackets, target_n):
-        while len(brackets) < target_n:
-            brackets.append([brackets[-1][0], 0.0])
-        return brackets[:target_n]
+    # Pad arrays after conversion so the last real bracket retains its sentinel width.
+    def _padded_rates_and_widths(brackets):
+        rates, widths = _brackets_to_rates_and_widths(brackets, _LAST_BRACKET_SENTINEL)
+        padding = (0, N_st - len(brackets))
+        return np.pad(rates, padding), np.pad(widths, padding)
 
-    brackets_single = _pad(list(entry_single["brackets"]), N_st)
-    brackets_mfj = _pad(list(entry_mfj["brackets"]) if N_i == 2 else list(entry_single["brackets"]), N_st)
-
-    rates_s, widths_s = _brackets_to_rates_and_widths(brackets_single, _LAST_BRACKET_SENTINEL)
-    rates_m, widths_m = _brackets_to_rates_and_widths(brackets_mfj, _LAST_BRACKET_SENTINEL)
+    rates_s, widths_s = _padded_rates_and_widths(entry_single["brackets"])
+    rates_m, widths_m = _padded_rates_and_widths(entry_mfj["brackets"] if N_i == 2 else entry_single["brackets"])
 
     # --- Build per-year arrays, switching filing status at n_d ---
     st_theta_tn = np.zeros((N_st, N_n))
